@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import CANNON from "cannon";
+import * as THREE from "./node_modules/three";
+import CANNON from "./node_modules/cannon-es";
 
 window.localStorage;
 
