@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@900&display=swap");
+
+:root {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+body {
+  margin: 0;
+  color: white;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  cursor: pointer;
+}
+
+#instructions {
+  display: none;
+}
+
+#results,
+body:hover #instructions {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(20, 20, 20, 0.75);
+}
+
+#results {
+  display: none;
+  cursor: default;
+  font-size: 8em;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem;
+  padding: 0;
+}
+
+#score {
+  position: absolute;
+  color: white;
+  font-size: 3em;
+  font-weight: bold;
+  top: 30px;
+  right: 30px;
+}
+
+#mode {
+  position: absolute;
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  top: 30px;
+  left: 30px;
+}
+
+#player1 {
+  position: absolute;
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  top: 50vh;
+  left: 30px;
+}
+
+#player2 {
+  position: absolute;
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  top: 50vh;
+  right: 30px;
+}
+
+#players {
+  display: none;
+}
+
+#highscore {
+  position: absolute;
+  color: white;
+  font-size: 1em;
+  font-weight: bold;
+  top: 30px;
+  left: 50%;
+}
+
