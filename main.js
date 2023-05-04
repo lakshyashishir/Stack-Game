@@ -172,7 +172,7 @@ function generateBox(x, y, z, width, depth, falls) {
       color = new THREE.Color(`rgb(${100 + stack.length * 10}, 90, 200)`);
     }
   } else {
-    color = new THREE.Color("rgb0,0,0)");
+    color = new THREE.Color("rgb(255,255,255)");
   }
   const geometry = new THREE.BoxGeometry(width, boxHeight, depth);
   const material = new THREE.MeshLambertMaterial({ color });
@@ -246,10 +246,6 @@ window.addEventListener("keydown", function (event) {
   }
 });
 
-restartButton.addEventListener("click", function () {
-  startGame();
-  return;
-});
 
 function eventHandler() {
   mySound = new sound("./assets/touch.wav");
