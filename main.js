@@ -1,11 +1,23 @@
-import * as THREE from 'three';
-import CANNON from 'cannon';
+import * as THREE from "three";
+import CANNON from "cannon";
 
-window.localStorage
+window.localStorage;
 
-window.focus(); 
-let camera, scene, renderer, world, lastTime, stack, overhangs, autopilot, gameEnded, multiplayer= false, highscore, mySound, bgSound; 
-const boxHeight = 1; 
+window.focus();
+let camera,
+  scene,
+  renderer,
+  world,
+  lastTime,
+  stack,
+  overhangs,
+  autopilot,
+  gameEnded,
+  multiplayer = false,
+  highscore,
+  mySound,
+  bgSound;
+const boxHeight = 1;
 const originalBoxSize = 3;
 
 const scoreElement = document.getElementById("score");
@@ -24,31 +36,29 @@ function init() {
   stack = [];
   overhangs = [];
 
-
-  if(window.localStorage.getItem("highscore") == null) {
+  if (window.localStorage.getItem("highscore") == null) {
     window.localStorage.setItem("highscore", 0);
   }
-  
+
   highscore = window.localStorage.getItem("highscore");
   highscoreElement.innerText = "Highscore : " + highscore;
- 
+
   world = new CANNON.World();
-  world.gravity.set(0, -10, 0); 
+  world.gravity.set(0, -10, 0);
   world.broadphase = new CANNON.NaiveBroadphase();
   world.solver.iterations = 10;
 
- 
   const aspect = window.innerWidth / window.innerHeight;
   const width = 12;
   const height = width / aspect;
 
   camera = new THREE.OrthographicCamera(
-    width / -2, 
+    width / -2,
     width / 2,
-    height / 2, 
-    height / -2, 
-    0, 
-    100 
+    height / 2,
+    height / -2,
+    0,
+    100
   );
 
   camera.position.set(4, 4, 4);
@@ -95,7 +105,6 @@ class sound {
   }
 }
 
-
 function startGame() {
   autopilot = false;
   gameEnded = false;
@@ -107,12 +116,11 @@ function startGame() {
   bgSound.play();
   bgSound.loop();
 
-  if(multiplayer) {
+  if (multiplayer) {
     modeElement.innerText = "• Multiplayer";
     playerElement.style.display = "block";
     highscoreElement.style.display = "none";
-  }
-  else {
+  } else {
     modeElement.innerText = "• Single Player";
     highscoreElement.style.display = "block";
   }
@@ -145,27 +153,26 @@ function startGame() {
 }
 
 function addLayer(x, z, width, depth, direction) {
-  const y = boxHeight * stack.length; 
+  const y = boxHeight * stack.length;
   const layer = generateBox(x, y, z, width, depth, false);
   layer.direction = direction;
   stack.push(layer);
 }
 
 function addOverhang(x, z, width, depth) {
-  const y = boxHeight * (stack.length - 1); 
+  const y = boxHeight * (stack.length - 1);
   const overhang = generateBox(x, y, z, width, depth, true);
   overhangs.push(overhang);
 }
 
 function generateBox(x, y, z, width, depth, falls) {
-let color;
-  if(multiplayer){
-    if(stack.length % 2 == 0) {
-       color = new THREE.Color(`rgb(${100 + stack.length * 10}, 90, 200)`);
-  }
-}
-  else {
-     color = new THREE.Color('rgb0,0,0)');
+  let color;
+  if (multiplayer) {
+    if (stack.length % 2 == 0) {
+      color = new THREE.Color(`rgb(${100 + stack.length * 10}, 90, 200)`);
+    }
+  } else {
+    color = new THREE.Color("rgb0,0,0)");
   }
   const geometry = new THREE.BoxGeometry(width, boxHeight, depth);
   const material = new THREE.MeshLambertMaterial({ color });
@@ -176,9 +183,9 @@ let color;
   const shape = new CANNON.Box(
     new CANNON.Vec3(width / 2, boxHeight / 2, depth / 2)
   );
-  let mass = falls ? 5 : 0; 
-  mass *= width / originalBoxSize; 
-  mass *= depth / originalBoxSize; 
+  let mass = falls ? 5 : 0;
+  mass *= width / originalBoxSize;
+  mass *= depth / originalBoxSize;
   const body = new CANNON.Body({ mass, shape });
   body.position.set(x, y, z);
   world.addBody(body);
@@ -187,7 +194,7 @@ let color;
     threejs: mesh,
     cannonjs: body,
     width,
-    depth
+    depth,
   };
 }
 
@@ -196,7 +203,6 @@ function cutBox(topLayer, overlap, size, delta) {
   const newWidth = direction == "x" ? overlap : topLayer.width;
   const newDepth = direction == "z" ? overlap : topLayer.depth;
 
-  
   topLayer.width = newWidth;
   topLayer.depth = newDepth;
 
@@ -204,7 +210,6 @@ function cutBox(topLayer, overlap, size, delta) {
   topLayer.threejs.position[direction] -= delta / 2;
 
   topLayer.cannonjs.position[direction] -= delta / 2;
-
 
   const shape = new CANNON.Box(
     new CANNON.Vec3(newWidth / 2, boxHeight / 2, newDepth / 2)
@@ -223,26 +228,22 @@ window.addEventListener("keydown", function (event) {
     bgSound.stop();
     startGame();
     return;
-  }
-  else if (event.key == "R" || event.key == "r") {
+  } else if (event.key == "R" || event.key == "r") {
     event.preventDefault();
     bgSound.stop();
     startGame();
     return;
-  }
-  else if (event.key == "M" || event.key == "m") {
+  } else if (event.key == "M" || event.key == "m") {
     scoreElement.style.display = "none";
     multiplayer = true;
     bgSound.stop();
     startGame();
     return;
-  }
-  else if (event.key == " ") {
+  } else if (event.key == " ") {
     event.preventDefault();
     eventHandler();
     return;
   }
-
 });
 
 restartButton.addEventListener("click", function () {
@@ -291,8 +292,8 @@ function splitBlockAndAddNextOneIfOverlaps() {
 
     const nextX = direction == "x" ? topLayer.threejs.position.x : -10;
     const nextZ = direction == "z" ? topLayer.threejs.position.z : -10;
-    const newWidth = topLayer.width; 
-    const newDepth = topLayer.depth; 
+    const newWidth = topLayer.width;
+    const newDepth = topLayer.depth;
     const nextDirection = direction == "x" ? "z" : "x";
 
     if (scoreElement) scoreElement.innerText = stack.length - 1;
@@ -304,7 +305,6 @@ function splitBlockAndAddNextOneIfOverlaps() {
 
 function missedTheSpot() {
   const topLayer = stack[stack.length - 1];
-
 
   addOverhang(
     topLayer.threejs.position.x,
@@ -318,25 +318,32 @@ function missedTheSpot() {
   gameEnded = true;
   bgSound.stop();
   if (resultsElement && !autopilot) resultsElement.style.display = "flex";
-  if (multiplayer){
+  if (multiplayer) {
     if (resultsElement) resultsElement.style.display = "flex";
     if (scoreElement) scoreElement.style.display = "none";
     mySound = new sound("./assets/win.wav");
     mySound.play();
     resultsElement.style.fontSize = "10em";
-    if(stack.length % 2 == 0) {
-      resultsElement.innerText = "Player 2 wins!";}
-    else{
-      resultsElement.innerText = "Player 1 wins!";}
-  }
-  else if (!multiplayer) {
-    resultsElement.innerText = "Game Over!" + "\n" + "Your score is " + (stack.length - 2) + "\n" + "Press R to restart";
-    if(stack.length > highscore) {
+    if (stack.length % 2 == 0) {
+      resultsElement.innerText = "Player 2 wins!";
+    } else {
+      resultsElement.innerText = "Player 1 wins!";
+    }
+  } else if (!multiplayer) {
+    resultsElement.innerText =
+      "Game Over!" +
+      "\n" +
+      "Your score is " +
+      (stack.length - 2) +
+      "\n" +
+      "Press R to restart";
+    if (stack.length > highscore) {
       localStorage.setItem("highscore", stack.length);
       console.log(localStorage.getItem("highscore"));
-    highscore = stack.length-2;
-    highscoreElement.innerText = "Highscore : " + highscore;}
-  } 
+      highscore = stack.length - 2;
+      highscoreElement.innerText = "Highscore : " + highscore;
+    }
+  }
 }
 
 function animation(time) {
@@ -345,21 +352,17 @@ function animation(time) {
     const speed = 0.008;
 
     const topLayer = stack[stack.length - 1];
-  
-    const boxShouldMove =
-      !gameEnded;
+
+    const boxShouldMove = !gameEnded;
 
     if (boxShouldMove) {
-      
       topLayer.threejs.position[topLayer.direction] += speed * timePassed;
       topLayer.cannonjs.position[topLayer.direction] += speed * timePassed;
 
-      
       if (topLayer.threejs.position[topLayer.direction] > 10) {
         missedTheSpot();
       }
     } else {
-      
     }
 
     if (camera.position.y < boxHeight * (stack.length - 2) + 4) {
@@ -382,7 +385,6 @@ function updatePhysics(timePassed) {
 }
 
 window.addEventListener("resize", () => {
-  
   console.log("resize", window.innerWidth, window.innerHeight);
   const aspect = window.innerWidth / window.innerHeight;
   const width = 10;
@@ -391,8 +393,6 @@ window.addEventListener("resize", () => {
   camera.top = height / 2;
   camera.bottom = height / -2;
 
-  
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.render(scene, camera);
 });
-
